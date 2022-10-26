@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const tmdbApiKey = import.meta.env.VITE_TMDB_KEY;
-// /movie/popular?api_key=${tmdbApiKey}&language=en-US&page=1
 
 export const tmdbApi = createApi({
   reducerPath: 'tmdbApi',
@@ -29,10 +28,28 @@ export const tmdbApi = createApi({
       // * Get Pupular Movies
       return `/movie/popular?page=${page}&api_key=${tmdbApiKey}`;
     } }),
+
+    // * Get Movie
+    getMovie: builder.query({ query: (id) => `/movie/${id}?append_to_response=videos,credits&api_key=${tmdbApiKey}` }),
+
+    // * Get User Specific Lists
+    getList: builder.query({ query: ({ listName, accountId, sessionId, page }) => `/account/${accountId}/${listName}?api_key=${tmdbApiKey}&session_id=${sessionId}&page=${page}` }),
+
+    getRecommendations: builder.query({ query: ({ movie_id, list }) => `/movie/${movie_id}/${list}?api_key=${tmdbApiKey}` }),
+
+    getActorDetails: builder.query({ query: (actor_id) => `/person/${actor_id}?api_key=${tmdbApiKey}` }),
+
+    // Get Actor Credits
+    getMoviesByActorId: builder.query({ query: ({ actor_id, page }) => `/discover/movie?with_cast=${actor_id}&page=${page}&api_key=${tmdbApiKey}` }),
   }),
 });
 
 export const {
   useGetGenresQuery,
   useGetMoviesQuery,
+  useGetMovieQuery,
+  useGetListQuery,
+  useGetRecommendationsQuery,
+  useGetActorDetailsQuery,
+  useGetMoviesByActorIdQuery,
 } = tmdbApi;
